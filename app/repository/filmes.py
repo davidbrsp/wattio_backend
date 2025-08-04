@@ -5,7 +5,6 @@ from app.database import session_local
 from app.models.filmes import Filme as FilmeDBModel
 from app.schemas.filmes import Filme as FilmeSchema
 
-# from sqlalchemy.ext.asyncio import AsyncSession
 db = session_local()
 
 
@@ -32,18 +31,16 @@ async def create_filme(filme_data: FilmeSchema) -> FilmeDBModel:
 
 
 async def get_filmes() -> list[FilmeDBModel]:
-    filmes = db.scalars(select(FilmeDBModel))
-    return filmes.all()
+    if not (filmes := db.scalars(select(FilmeDBModel)).all()):
+        raise HTTPException(status_code=404, detail="Filmes não encontrados.")
+    return filmes
 
 
 async def get_filme(filme_id: int):
-    filme = (
-        db.scalars(select(FilmeDBModel).where(FilmeDBModel.id == filme_id))
-    ).first()
-    if not filme:
-        # filme = {}
-        raise HTTPException(status_code=404, detail="User not found")
+    if not (
+        filme := db.scalars(
+            select(FilmeDBModel).where(FilmeDBModel.id == filme_id)
+        ).first()
+    ):
+        raise HTTPException(status_code=404, detail=f"Filme {filme_id} não encontrado.")
     return filme
-    # if not user:
-    #     raise HTTPException(status_code=404, detail="User not found")
-    # return user
