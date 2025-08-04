@@ -1,34 +1,29 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: my-postgres-db
     restart: always
     environment:
-      POSTGRES_DB: wattio_db
+      POSTGRES_DB: wattiodb
       POSTGRES_USER: wattio
       POSTGRES_PASSWORD: wattio
     ports:
-      - "5432:5432" # Maps host port 5432 to container port 5432
+      - "5432:5432"
     expose:
       - "5432"
     volumes:
-      - db_data:/var/lib/postgresql/data:cached # Persist data in a named volume
+      - db_data:/var/lib/postgresql/data:cached
   backend:
     build:
       context: .
       dockerfile: Dockerfile.yaml
     command: python /backend/app/main.py
-    tty: true
-    volumes:
-      # - ./app:/backend/app:cached
-      - ./.docker/.ipython:/root/.ipython:cached
     environment:
       PYTHONPATH: .
-      DATABASE_URL: "postgresql+asyncpg://wattio:wattio@postgres:5432/wattio_db"
+      DATABASE_URL: "postgresql://wattio:wattio@postgres:5432/wattiodb"
     depends_on:
       - "postgres"
     ports:
       - 8000:8000
 
 volumes:
-  db_data: # Define the named volume
+  db_data:

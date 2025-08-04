@@ -1,7 +1,7 @@
-from pydantic import AnyUrl, BaseModel, ConfigDict
+from pydantic import AnyUrl, BaseModel
+
 
 class Filme(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     id: int
     titulo: str
     descricao: str
@@ -10,3 +10,7 @@ class Filme(BaseModel):
     diretor: str
     atores: list[str]
     url_trailer: AnyUrl
+    classificacao_etaria: str
+
+    class Config:
+        orm_mode = True

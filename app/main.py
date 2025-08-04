@@ -1,40 +1,29 @@
 import logging
 import sys
-from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
 
+from app.config import settings
+from app.database import base, engine
 from app.routers.filmes import router as filmes_router
-# from app.config import settings
-# from app.database import sessionmanager
 
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG if settings.log_level == "DEBUG" else logging.INFO)
+base.metadata.create_all(bind=engine)
 
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.DEBUG if settings.log_level == "DEBUG" else logging.INFO,
+)
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     """
-#     Function that handles startup and shutdown events.
-#     To understand more, read https://fastapi.tiangolo.com/advanced/events/
-#     """
-#     yield
-#     if sessionmanager._engine is not None:
-#         # Close the DB connection
-#         await sessionmanager.close()
-
-
-# app = FastAPI(lifespan=lifespan, title=settings.project_name, docs_url="/api/docs")
-app = FastAPI(tile="Wattio Backend", docs_url="/docs")
+app = FastAPI(title=settings.project_name, docs_url="/docs")
+app.include_router(filmes_router)
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello WattIO"}
-
-
-# Routers
-app.include_router(filmes_router)
+    return {
+        "message": "Olá WattIO! Bem-vindo à API backend.\nAcesse /docs para ver a documentação da API."
+    }
 
 
 if __name__ == "__main__":

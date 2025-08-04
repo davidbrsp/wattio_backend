@@ -1,6 +1,7 @@
 FROM python:3.12-bullseye
 
 RUN mkdir /backend
+
 WORKDIR /backend
 
 RUN apt update && \
