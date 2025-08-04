@@ -1,0 +1,9 @@
+*.pdf
+*.md
+*.MD
+*.yaml
+.git/
+.docker/
+Makefile
+.vscode/
+*.json
